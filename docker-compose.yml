@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    depends_on:
+      - db
+    volumes:
+      - ./:/gemini_database_rag:ro
+      - ./gemini_database_rag/assets:/shared_data:ro
+    environment:
+      - DATABASE_URL=postgresql://postgres:admin@db:5432/dockert
+      - GEMINI_API_KEY=[GEMINI_API_KEY]
+    ports:
+      - "8000:8000"
+
+  db:
+      image: postgres:15-alpine
+      volumes:
+        - postgres_data:/var/lib/postgresql/data/
+        - ./gemini_database_rag/assets:/shared_data:ro
+      expose:
+        - 5432
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=admin
+        - POSTGRES_DB=dockert
+
+volumes:
+      postgres_data:
